@@ -56,6 +56,7 @@ export default {
       this.$refs['excel-upload-input'].value = null // fix can't select the same excel
     },
     readerData(itemFile) {
+      console.log(itemFile)
       const reader = new FileReader()
       reader.onload = e => {
         const data = e.target.result
@@ -65,6 +66,7 @@ export default {
         const worksheet = workbook.Sheets[firstSheetName]
         const header = this.get_header_row(worksheet)
         const results = XLSX.utils.sheet_to_json(worksheet)
+        // console.log(data)
         this.generateDate({ header, results })
       }
       reader.readAsArrayBuffer(itemFile)

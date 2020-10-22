@@ -48,9 +48,12 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
+
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
+import { loginByUsername } from '@/api/login'
 
 export default {
   components: { LangSelect, SocialSign },
@@ -73,7 +76,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '1111111'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -93,6 +96,12 @@ export default {
       }
     },
     handleLogin() {
+      // loginByUsername('admin', '123')
+      //   .then(res => {
+      //     console.log(res);
+      //   });
+      // return;
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -101,6 +110,7 @@ export default {
             this.$router.push({ path: '/' })
           }).catch(() => {
             this.loading = false
+            Message.error('账号或密码错误！')
           })
         } else {
           console.log('error submit!!')
