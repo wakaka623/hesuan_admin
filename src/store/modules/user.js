@@ -52,7 +52,7 @@ const user = {
           console.log(response)
           const data = response.data
 
-          if (data.code === '0') reject();
+          if (data.statusCode === '0') reject();
 
           commit('SET_TOKEN', data.token)
           setToken(response.data.token)
