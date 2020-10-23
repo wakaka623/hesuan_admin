@@ -54,8 +54,8 @@ const user = {
 
           if (data.statusCode === '0') reject();
 
-          commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
+          commit('SET_TOKEN', data.username)
+          // setToken(response.data.token)
           resolve()
         }).catch(error => {
           reject(error)

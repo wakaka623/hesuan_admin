@@ -96,12 +96,6 @@ export default {
       }
     },
     handleLogin() {
-      // loginByUsername('admin', '123')
-      //   .then(res => {
-      //     console.log(res);
-      //   });
-      // return;
-
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true

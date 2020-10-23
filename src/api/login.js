@@ -6,9 +6,7 @@ export function loginByUsername(username, password) {
     password
   }
   return request({
-    // url: 'wechat/user/authority_list',
     url: '/api/login/login',
-    // url: '/login/login',
     method: 'post',
     data
   })
@@ -16,8 +14,8 @@ export function loginByUsername(username, password) {
 
 export function logout() {
   return request({
-    url: '/login/logout',
-    method: 'post'
+    url: '/api/login/logout',
+    // method: 'post'
   })
 }
 
