@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { importExcel } from '@/api/excel';
+import axios from 'axios';
 
 export default {
   name: 'test',
@@ -69,8 +71,37 @@ export default {
      * 上传文件
      */
     handleFileChange(e) {
+      // console.log(this.files);
       console.log(e);
-      const files = e.target.files;
+      const files = e.target.files[0];
+      var formData = new FormData();
+
+      formData.append('username', 'Chris');
+      console.log(formData);
+      console.log(formData.entries());
+
+      formData.append('key1', 'value1');
+      formData.append('excel', files);
+      formData.append('key2', 'value2');
+
+
+      console.log('上传文件');
+      console.log(formData.getAll());
+
+      axios({
+        url: '/api/import/excel',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        method: 'post',
+        data: {
+          formData
+        }
+      })
+
+      return;
+      importExcel(formData)
+        .then(res => {
+          console.log(res);
+        });
     },
 
     handleSelectionChange(val) {
