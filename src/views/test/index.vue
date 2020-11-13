@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <BatchCheckbox :leng="tabPagesData.length" />
+    <BatchCheckbox ref="batchCheckBox" :cities="tabPagesData" @finish="handleBatchCheckFnish" />
     <div class="header">
       <el-row :gutter="20" style="display: flex; justify-content: center;">
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
@@ -51,8 +51,7 @@ export default {
   data() {
     return {
       tabPagesData: [],    // 表格数据（做分页处理）
-      // 表格标题
-      tableHeadData: {},
+      tableHeadData: {},   // 表格标题
       // 表格展示数据
       tableData: [
         // {
@@ -143,7 +142,7 @@ export default {
             Message.error('上传失败！');
           }
 
-          // document.getElementById('excel-upload-input').value = '';
+          document.getElementById('excel-upload-input').value = '';
           // 重新获取表格数据
           this.handleGetTableDatas();
         });
@@ -186,17 +185,51 @@ export default {
     },
 
     /**
-     * 点击批量导出
+     * 点击批量导出按钮
      * @callback
+     * @todo 显示批量导出弹窗
      */
     handleBatchUpload() {
-      this.$msgbox({
-        title: '请选择要导出的页码',
-        message: '<el-button type="primary" @click="handleBatchUpload">批量导出</el-button>',
-        dangerouslyUseHTMLString: true,
-        showCancelButton: true,
+      this.$refs.batchCheckBox.display();
+    },
 
-      });
+    /**
+     * 确定批量导出按钮
+     * @callback
+     * @todu 导出选中页码的数据
+     */
+    handleBatchCheckFnish(e) {
+      const data = [];
+      const pages = e.pages;
+
+      pages.forEach(item => {
+        this.tabPagesData[item - 1].forEach(m => {
+          data.push(m);
+        });
+      })
+
+      data.unshift(this.tableHeadData);
+
+      console.log(data);
+
+      // 发送ajax
+      downLoadTable(data)
+        .then(res => {
+          console.log(res);
+
+          if (res.data.code !== '1') {
+            Message.error(res.data.message);
+            return;
+          }
+
+          Message.success('导出成功!');
+
+          window.open(res.data.data);
+
+          // 取消所有页码选中效果
+          this.$refs.batchCheckBox.checkedCities = [];
+          this.$refs.batchCheckBox.isCheckedBox = 0;
+        });
     },
 
     /**
