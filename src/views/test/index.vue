@@ -1,18 +1,18 @@
 <template>
-  <div class="app-container">
-    <BatchCheckbox ref="batchCheckBox" :cities="tabPagesData" @finish="handleBatchCheckFnish" />
+  <div class="app-container" v-loading="loading">
+    <multipleChoiceCase :isShow="isShowMultipleChoiceCase" @finish="handleFinishMultipleChoice" @clear="isShowMultipleChoiceCase = false" />
     <div class="header">
       <el-row :gutter="20" style="display: flex; justify-content: center;">
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
-        <!-- <el-col :span="2"><div class="grid-content bg-purple"><el-input placeholder="标题"></el-input></div></el-col>
-        <el-button type="primary">添加</el-button> -->
-        <el-button type="primary" @click="handleDownload">导出</el-button>
         <el-button type="primary" @click="handleUpload">导入</el-button>
-        <el-button type="primary" @click="handleBatchUpload">批量导出</el-button>
+        <el-button type="primary" @click="handleDownload">导出</el-button>
+        <el-button type="primary" @click="handleBatchUpload">条件导出</el-button>
       </el-row>
     </div>
     <div class="main">
-      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%; margin-bottom: 10px; overflow-y: auto;"
+      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
+        style="width: 100%; margin-bottom: 10px; overflow-y: auto;"
+
         stripe
         header-row-class-name="table-header-rows"
         header-cell-class-name="table-header-cells"
@@ -28,7 +28,8 @@
         background
         layout="prev, pager, next"
         :page-size="1"
-        :total="tabPagesData.length"
+        :current-page="currentPage"
+        :total="tabPagesCount"
         style="display: flex; justify-content: center;"
         @current-change="handleCurPageChange">
       </el-pagination>
@@ -39,30 +40,31 @@
 <script>
 import { Message } from 'element-ui';
 
-import { getTableHeader, getTableDatas, importExcel, downLoadTable } from '@/api/excel';
+import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTable } from '@/api/excel';
 
-import BatchCheckbox from './components/batch-checkbox.vue';
+import multipleChoiceCase from './components/multiple-choice-case';
+
+/** 当前表名 */
+const TABLE_NAME = 'ruida_fund_reconciliation';
 
 export default {
   name: 'test',
   components: {
-    BatchCheckbox
+    multipleChoiceCase,
   },
   data() {
     return {
-      tabPagesData: [],    // 表格数据（做分页处理）
-      tableHeadData: {},   // 表格标题
-      // 表格展示数据
-      tableData: [
-        // {
-        //   date: '2016-05-03',
-        //   name: '王小虎',
-        //   address: '上海市普陀区金沙江路 1518 弄'
-        // }
-        // {customer_name: '应吉跃'}
-      ],
-      // 表格选中的数据
-      multipleSelection: []
+      loading: true,
+      // tabPagesData: [],      // 表格页码集  表格数据（做分页处理）
+      tableHeadData: {},     // 表格标题
+      tableData: [],         // 表格数据（当前页码）
+      currentPage: 1,        // 当前页数
+      tabPagesCount: 0,      // 表格页码总数 （10条数据分1页）
+      multipleSelection: [], // 当前页码表格选中的数据
+      isShowMultipleChoiceCase: false,   // 显示 multipleChoiceCase 组件
+      multipleChoiceList: {              // 条件导出表单
+
+      },
     }
   },
   computed: {
@@ -76,16 +78,24 @@ export default {
   methods: {
     /**
      * 获取表格数据
+     * @param page 页码 （10条数据分1页）
      */
-    handleGetTableDatas() {
-      getTableDatas('ruida_fund_reconciliation')
+    handleGetTableDatas(page = 1) {
+      this.loading = true;
+      getTableDatas(TABLE_NAME, page)
         .then(res => {
           console.log(res);
           const data = res.data;
 
-          this.handleSplitTableData(data);
+          this.loading = false;
 
-          this.tableData = this.tabPagesData[0];
+          if (data.code !== '1') {
+            Message.error(data.message);
+            return;
+          }
+
+          this.tableData = data.data;
+          this.tabPagesCount = data.pages_count;
         });
     },
 
@@ -127,7 +137,7 @@ export default {
       const files = e.target.files[0];
       var formData = new FormData();
 
-      formData.append('library', 'ruida_fund_reconciliation');
+      formData.append('library', TABLE_NAME);
       formData.append('file', files);
 
       console.log('开始上传文件');
@@ -190,46 +200,7 @@ export default {
      * @todo 显示批量导出弹窗
      */
     handleBatchUpload() {
-      this.$refs.batchCheckBox.display();
-    },
-
-    /**
-     * 确定批量导出按钮
-     * @callback
-     * @todu 导出选中页码的数据
-     */
-    handleBatchCheckFnish(e) {
-      const data = [];
-      const pages = e.pages;
-
-      pages.forEach(item => {
-        this.tabPagesData[item - 1].forEach(m => {
-          data.push(m);
-        });
-      })
-
-      data.unshift(this.tableHeadData);
-
-      console.log(data);
-
-      // 发送ajax
-      downLoadTable(data)
-        .then(res => {
-          console.log(res);
-
-          if (res.data.code !== '1') {
-            Message.error(res.data.message);
-            return;
-          }
-
-          Message.success('导出成功!');
-
-          window.open(res.data.data);
-
-          // 取消所有页码选中效果
-          this.$refs.batchCheckBox.checkedCities = [];
-          this.$refs.batchCheckBox.isCheckedBox = 0;
-        });
+      this.isShowMultipleChoiceCase = !this.isShowMultipleChoiceCase;
     },
 
     /**
@@ -246,7 +217,8 @@ export default {
      * @callback
      */
     handleCurPageChange(current) {
-      this.tableData = this.tabPagesData[current - 1];
+      // this.tableData = this.tabPagesData[current - 1];
+      this.handleGetTableDatas(current);
     },
 
     /**
@@ -256,11 +228,33 @@ export default {
       const num = val.length;
       return (num + 3) * 15 + '';
     },
+
+    /**
+     * 确定批量导出按钮
+     * @callback
+     */
+    handleFinishMultipleChoice(e) {
+      console.log(e);
+      const data = e.data;
+
+      this.loading = true;
+
+      downChoiceTable(TABLE_NAME, data)
+        .then(res => {
+          this.loading = false;
+
+          if (res.data.code === '1') {
+            window.open(res.data.url);
+            Message.success(res.data.message);
+          } else {
+            Message.error(res.data.message);
+          }
+        });
+    }
   },
   mounted() {
-    console.log('mounted')
     // 获取表格标题栏
-    getTableHeader('ruida_fund_reconciliation')
+    getTableHeader(TABLE_NAME)
       .then(res => {
         console.log(res);
 
@@ -283,6 +277,10 @@ export default {
   max-height: 500px;
   overflow-y: auto;
 } */
+
+.header {
+  margin-bottom: 10px;
+}
 
 .table-header-cells {
   text-align: center !important;

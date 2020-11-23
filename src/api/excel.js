@@ -38,9 +38,10 @@ export function getTableHeader(tableName) {
  * 获取表格数据
  * @param {String} tableName 要获取的表名（数据库表名）
  */
-export function getTableDatas(tableName) {
+export function getTableDatas(tableName, page = 1) {
   const data = {
-    table_name: tableName
+    table_name: tableName,
+    page
   };
 
   return axios({
@@ -52,7 +53,7 @@ export function getTableDatas(tableName) {
 
 
 /**
- * 下载选定数据
+ * 下载选定数据(基础导出)
  * @param {Array} tableData
  */
 export function downLoadTable(tableData) {
@@ -62,6 +63,24 @@ export function downLoadTable(tableData) {
 
   return axios({
     url: '/api/import/excel/download',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
+ * 条件导出
+ * @param {*} condition
+ */
+export function downChoiceTable(tableName, condition) {
+  const data = {
+    table_name: tableName,
+    condition
+  }
+
+  return axios({
+    url: '/api/import/excel/get_choice_data',
     method: 'post',
     data
   });
