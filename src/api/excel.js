@@ -70,6 +70,24 @@ export function downLoadTable(tableData) {
 
 
 /**
+ * 搜索关键字
+ * @param {Object} val {key:value}
+ */
+export function searchKeyValue(tableName, val) {
+  const data = {
+    table_name: tableName,
+    val: val
+  };
+
+  return axios({
+    url:'/api/import/excel/search_key_value',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
  * 条件导出
  * @param {*} condition
  */

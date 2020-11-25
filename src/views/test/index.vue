@@ -1,6 +1,10 @@
 <template>
   <div class="app-container" v-loading="loading">
-    <multipleChoiceCase :isShow="isShowMultipleChoiceCase" @finish="handleFinishMultipleChoice" @clear="isShowMultipleChoiceCase = false" />
+    <multipleChoiceCase :isShow="isShowMultipleChoiceCase"
+      :choiceList="remoteChoiceList"
+      @finish="handleFinishMultipleChoice"
+      @clear="isShowMultipleChoiceCase = false"
+      @remote-method="handleChoiceRemoteSearch" />
     <div class="header">
       <el-row :gutter="20" style="display: flex; justify-content: center;">
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
@@ -12,7 +16,6 @@
     <div class="main">
       <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
         style="width: 100%; margin-bottom: 10px; overflow-y: auto;"
-
         stripe
         header-row-class-name="table-header-rows"
         header-cell-class-name="table-header-cells"
@@ -40,7 +43,7 @@
 <script>
 import { Message } from 'element-ui';
 
-import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTable } from '@/api/excel';
+import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTable, searchKeyValue } from '@/api/excel';
 
 import multipleChoiceCase from './components/multiple-choice-case';
 
@@ -62,9 +65,7 @@ export default {
       tabPagesCount: 0,      // 表格页码总数 （10条数据分1页）
       multipleSelection: [], // 当前页码表格选中的数据
       isShowMultipleChoiceCase: false,   // 显示 multipleChoiceCase 组件
-      multipleChoiceList: {              // 条件导出表单
-
-      },
+      remoteChoiceList: [],              // 远程搜索关键字列表
     }
   },
   computed: {
@@ -146,10 +147,10 @@ export default {
         .then(res => {
           console.log(res.data);
 
-          if (res.data === '1') {
-            Message.success('上传成功');
+          if (res.data.code === '1') {
+            Message.success('导入成功, 本次导入' + res.data.count + '条数据');
           } else {
-            Message.error('上传失败！');
+            Message.error('导入失败！');
           }
 
           document.getElementById('excel-upload-input').value = '';
@@ -229,13 +230,40 @@ export default {
       return (num + 3) * 15 + '';
     },
 
+
+    /**
+     * 条件导出关键字
+     * @callback remote-method
+     * @todo 输入关键字返回完整对应可选值
+     */
+    handleChoiceRemoteSearch(e) {
+      const val = e.val;
+      const key = e.keyName;
+
+      // this.remoteChoiceList = [val];
+      console.log(e);
+
+      searchKeyValue(TABLE_NAME, {
+        [key]: val
+      }).then(res => {
+        console.log(res);
+      })
+    },
+
     /**
      * 确定批量导出按钮
-     * @callback
+     * @callback click
      */
     handleFinishMultipleChoice(e) {
       console.log(e);
       const data = e.data;
+      const keys = Object.keys(data);
+
+      if (!data || keys.length === 0) {
+        Message.error('请选择条件');
+        return;
+      }
+
 
       this.loading = true;
 
