@@ -51,7 +51,7 @@ import multipleChoiceCase from './components/multiple-choice-case';
 const TABLE_NAME = 'ruida_fund_reconciliation';
 
 export default {
-  name: 'test',
+  name: 'capital',  // 资金表
   components: {
     multipleChoiceCase,
   },
@@ -132,7 +132,7 @@ export default {
       document.getElementById('excel-upload-input').click();
     },
     /**
-     * 上传文件
+     * 导入
      */
     handleFileChange(e) {
       const files = e.target.files[0];
@@ -150,13 +150,15 @@ export default {
           if (res.data.code === '1') {
             Message.success('导入成功, 本次导入' + res.data.count + '条数据');
           } else {
-            Message.error('导入失败！');
+            Message.error('失败！' + res.data.message);
           }
 
           document.getElementById('excel-upload-input').value = '';
           // 重新获取表格数据
           this.handleGetTableDatas();
-        });
+        }).catch(err => {
+          console.log(err);
+        })
     },
 
     /**
@@ -227,6 +229,9 @@ export default {
      */
     setTableBoxWidth(val) {
       const num = val.length;
+
+      if (val === '唯一标识码') return '200';
+
       return (num + 3) * 15 + '';
     },
 

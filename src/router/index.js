@@ -41,14 +41,47 @@ export const constantRouterMap = [
     }]
   },
   {
-    path: '/test',
+    path: '/ruida',
     component: Layout,
-    redirect: '/test/index',
+    redirect: '/ruida/capital',
+    alwaysShow: true,
+    meta: {
+      title: '瑞达',
+      icon: 'documentation',
+      roles: ['admin', 'editor']
+    },
     children: [{
-      path: 'index',
-      component: () => import('@/views/test/index'),
-      name: 'test',
-      meta: { title: 'test', icon: 'documentation', noCache: true }
+      path: 'capital',
+      component: () => import('@/views/ruida/capital'),
+      name: 'capital',
+      meta: { title: '资金表', icon: 'documentation', noCache: true }
+    }, {
+      path: 'transaction',
+      component: () => import('@/views/ruida/transaction'),
+      name: 'transaction',
+      meta: { title: '成交表', icon: 'documentation', noCache: true }
+    },{
+      path: 'cash-in-adn-out',
+      component: () => import('@/views/ruida/cash-in-adn-out'),
+      name: 'cash-in-adn-out',
+      meta: { title: '出入金表', icon: 'documentation', noCache: true }
+    }]
+  },
+  {
+    path: '/sanli',
+    component: Layout,
+    redirect: '/sanli/capital',
+    alwaysShow: true,
+    meta: {
+      title: '三立',
+      icon: 'documentation',
+      roles: ['admin', 'editor']
+    },
+    children: [{
+      path: 'capital',
+      component: () => import('@/views/sanli/capital'),
+      name: 'capital',
+      meta: { title: '资金表', icon: 'documentation', noCache: true }
     }]
   }
 ]
