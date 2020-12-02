@@ -48,7 +48,6 @@ export const constantRouterMap = [
     meta: {
       title: '瑞达',
       icon: 'documentation',
-      roles: ['admin', 'editor']
     },
     children: [{
       path: 'capital',
@@ -61,9 +60,9 @@ export const constantRouterMap = [
       name: 'transaction',
       meta: { title: '成交表', icon: 'documentation', noCache: true }
     },{
-      path: 'cash-in-adn-out',
-      component: () => import('@/views/ruida/cash-in-adn-out'),
-      name: 'cash-in-adn-out',
+      path: 'cash-in-and-out',
+      component: () => import('@/views/ruida/cash-in-and-out'),
+      name: 'cash-in-and-out',
       meta: { title: '出入金表', icon: 'documentation', noCache: true }
     }]
   },
@@ -75,13 +74,118 @@ export const constantRouterMap = [
     meta: {
       title: '三立',
       icon: 'documentation',
-      roles: ['admin', 'editor']
     },
     children: [{
       path: 'capital',
       component: () => import('@/views/sanli/capital'),
       name: 'capital',
       meta: { title: '资金表', icon: 'documentation', noCache: true }
+    },{
+      path: 'transaction',
+      component: () => import('@/views/sanli/transaction'),
+      name: 'transaction',
+      meta: { title: '成交表', icon: 'documentation', noCache: true }
+    },]
+  },
+  {
+    path: '/jinkong',
+    component: Layout,
+    redirect: '/jinkong/fund-reconciliation',
+    alwaysShow: true,
+    meta: {
+      title: '金控',
+      icon: 'documentation',
+    },
+    children: [{
+      path: 'fund-reconciliation',
+      component: () => import('@/views/jinkong/fund-reconciliation'),
+      name: 'fund-reconciliation',
+      meta: { title: '资金表', icon: 'documentation', noCache: true }
+    },{
+      path: 'transaction-statistics',
+      component: () => import('@/views/jinkong/transaction-statistics'),
+      name: 'transaction-statistics',
+      meta: { title: '交易表', icon: 'documentation', noCache: true }
+    },{
+      path: 'cash-in-and-out',
+      component: () => import('@/views/jinkong/cash-in-and-out'),
+      name: 'cash-in-and-out',
+      meta: { title: '出入金表', icon: 'documentation', noCache: true }
+    },]
+  },
+  {
+    path: '/hengyin',
+    component: Layout,
+    redirect: '/hengyin/customer-funds',
+    alwaysShow: true,
+    meta: {
+      title: '横银',
+      icon: 'documentation',
+    },
+    children: [{
+      path: 'customer-funds',
+      component: () => import('@/views/hengyin/customer-funds'),
+      name: 'customer-funds',
+      meta: { title: '资金表', icon: 'documentation', noCache: true }
+    },{
+      path: 'customer-transaction',
+      component: () => import('@/views/hengyin/customer-transaction'),
+      name: 'customer-transaction',
+      meta: { title: '成交表', icon: 'documentation', noCache: true }
+    }]
+  },
+  {
+    path: '/huaxin',
+    component: Layout,
+    redirect: '/huaxin/transaction-statistics',
+    alwaysShow: true,
+    meta: {
+      title: '华鑫',
+      icon: 'documentation',
+    },
+    children: [{
+      path: 'transaction-statistics',
+      component: () => import('@/views/huaxin/transaction-statistics'),
+      name: 'transaction-statistics',
+      meta: { title: '交易表', icon: 'documentation', noCache: true }
+    },{
+      path: 'fund-reconciliation',
+      component: () => import('@/views/huaxin/fund-reconciliation'),
+      name: 'fund-reconciliation',
+      meta: { title: '资金表', icon: 'documentation', noCache: true }
+    },{
+      path: 'cash-in-and-out',
+      component: () => import('@/views/huaxin/cash-in-and-out'),
+      name: 'cash-in-and-out',
+      meta: { title: '出入金表', icon: 'documentation', noCache: true }
+    },]
+  },
+  {
+    path: '/chuangyuan',
+    component: Layout,
+    meta: {
+      title: '创元',
+      icon: 'documentation',
+    },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/chuangyuan/index'),
+      name: 'index',
+      meta: { title: '创元', icon: 'icon', noCache: true }
+    }]
+  },
+  {
+    path: '/dongzheng',
+    component: Layout,
+    meta: {
+      title: '东证',
+      icon: 'documentation',
+    },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/dongzheng/index'),
+      name: 'index',
+      meta: { title: '东证', icon: 'icon', noCache: true }
     }]
   }
 ]

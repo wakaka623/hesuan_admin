@@ -48,10 +48,10 @@ import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTa
 import multipleChoiceCase from '@/components/multiple-choice-case/index.vue';
 
 /** 当前表连接的数据库表名 */
-const TABLE_NAME = 'ruida_fund_reconciliation';
+const TABLE_NAME = 'sanli_customer_transaction';
 
 export default {
-  name: 'capital',  // 瑞达资金表
+  name: 'transaction',  // 三立成交管理表
   components: {
     multipleChoiceCase,
   },
@@ -231,6 +231,7 @@ export default {
       const num = val.length;
 
       if (val === '唯一标识码') return '200';
+      if (val === '摘要') return '230';
 
       return (num + 3) * 15 + '';
     },
@@ -319,10 +320,15 @@ export default {
   text-align: center !important;
   border-left: 1px solid #ddd;
   border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   border-bottom: 1px solid #aaa !important;
   padding: 10px 0 !important;
   height: 50px !important;
   color: #333;
+}
+
+.table-header-cells:last-child {
+  border-right: 1px solid #ddd;
 }
 
 .table-cells {
@@ -330,6 +336,7 @@ export default {
   padding: 0 !important;
   text-align: center !important;
   border-left: 1px solid #f0efef;
+  border-right: 1px solid #f0efef;
 }
 
 </style>

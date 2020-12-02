@@ -18,7 +18,14 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
-      }
+      },
+      '/a': {
+        target: 'http://110.80.34.170:9081',
+        changeOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/a': ''
+        }
+      },
     },
 
     // Various Dev Server settings

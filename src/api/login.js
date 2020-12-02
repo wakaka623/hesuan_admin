@@ -26,3 +26,10 @@ export function getUserInfo(token) {
     data: { token }
   })
 }
+
+
+export function getTest() {
+  return request({
+    url: '/a/web/AjaxInterFace?ServNamecom.ncc.services.company.CompanyHomePageServies.getCustCountInfo',
+  });
+}

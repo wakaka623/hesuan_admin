@@ -41,6 +41,13 @@
 </template>
 
 <script>
+/**
+ * 创建新表:
+ * 1、更改vue实例name属性
+ * 2、更改TABLE_NAME常量——》【数据库对应表名】
+ * 3、数据库创建完毕记得 【修改数据库引擎为innodb（兼容事务回滚）】
+ */
+
 import { Message } from 'element-ui';
 
 import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTable, searchKeyValue } from '@/api/excel';
@@ -48,10 +55,10 @@ import { getTableHeader, getTableDatas, importExcel, downLoadTable, downChoiceTa
 import multipleChoiceCase from '@/components/multiple-choice-case/index.vue';
 
 /** 当前表连接的数据库表名 */
-const TABLE_NAME = 'ruida_fund_reconciliation';
+const TABLE_NAME = 'huaxin_fund_reconciliation';
 
 export default {
-  name: 'capital',  // 瑞达资金表
+  name: 'fund-reconciliation',  // 华鑫资金对账表
   components: {
     multipleChoiceCase,
   },
