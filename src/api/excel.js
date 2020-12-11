@@ -67,39 +67,3 @@ export function downLoadTable(tableData) {
     data
   });
 }
-
-
-/**
- * 搜索关键字
- * @param {Object} val {key:value}
- */
-export function searchKeyValue(tableName, val) {
-  const data = {
-    table_name: tableName,
-    val: val
-  };
-
-  return axios({
-    url:'/api/import/excel/search_key_value',
-    method: 'post',
-    data
-  });
-}
-
-
-/**
- * 条件导出
- * @param {*} condition
- */
-export function downChoiceTable(tableName, condition) {
-  const data = {
-    table_name: tableName,
-    condition
-  }
-
-  return axios({
-    url: '/api/import/excel/get_choice_data',
-    method: 'post',
-    data
-  });
-}

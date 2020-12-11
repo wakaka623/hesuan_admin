@@ -38,12 +38,6 @@ export default {
       type: String,
       default: '居间'
     },
-    // choiceList: {           // 条件字段选项列表
-    //   type: Array,
-    //   default() {
-    //     return []
-    //   }
-    // }
   },
   data() {
     return {

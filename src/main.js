@@ -16,6 +16,7 @@ import './icons' // icon
 import './errorLog'// error log
 import './permission' // permission control
 import './mock' // simulation data
+import { initDateFormat } from './utils/utils'
 
 import * as filters from './filters' // global filters
 
@@ -30,6 +31,8 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
+
+initDateFormat();
 
 new Vue({
   el: '#app',
