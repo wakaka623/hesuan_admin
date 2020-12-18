@@ -53,7 +53,7 @@ export function getTableDatas(tableName, page = 1) {
 
 
 /**
- * 下载选定数据(基础导出)
+ * 下载选择列表的数据(基础导出)
  * @param {Array} tableData
  */
 export function downLoadTable(tableData) {
@@ -63,6 +63,27 @@ export function downLoadTable(tableData) {
 
   return axios({
     url: '/api/import/excel/download',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
+ * 条件导出多个表格数据
+ * @param {Array} tableNames 表名集合
+ * @param {Array} selectColumns 选中的键列表
+ * @param {Array} selectData 选中的数据列表
+ */
+export function mergeExport(tableNames, selectColumns, selectData) {
+  const data = {
+    table_names: tableNames,
+    select_data: selectData,
+    select_columns: selectColumns,
+  };
+
+  return axios({
+    url: '/api/import/excel/merge_export',
     method: 'post',
     data
   });

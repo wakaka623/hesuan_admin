@@ -3,41 +3,18 @@
     <selectLister ref="selecTableList" choiceTitle="选择导出表" />
     <div id="form-wrap" class="form-wrap">
       <div class="form-item" :class="item.label === addoptns ? 'form-item-life' : ''" v-for="(item, index) in options" :key="index">
-        <div class="item-label"><div style="white-space: nowrap;">{{item.label}}: </div></div>
+        <div class="item-label" style="width: 54px;"><div>{{item.label}}: </div></div>
         <div class="item-input-wrap" style="display: flex; align-items: center; flex-wrap: wrap;width: 260px;">
-          <!-- <el-input name="d" :style="setInputWidth(item.value)" placeholder="请输入内容"></el-input> -->
           <div v-for="(m, i) in item.selectData" :key="i" style="display: flex;" :style="(i > 1 ? 'margin-top: 3px;' : '')">
-            <div v-if="(i % 2) && item.value == 'unique_code'" class="" style="align-self: center;margin: 0 5px;">-</div>
-            <div v-if="(i % 2) && item.value != 'unique_code'" class="" style="align-self: flex-end;">，</div>
-            <el-input name="d" :style="setInputWidth(item.value)" placeholder="请输入内容" data-type="123999" maxlength="20" @input="handelFormItemInput(index, i, $event)"></el-input>
-          </div>
-
-          <!-- <div v-if="index === 1" style="display: flex;">
-            <div class="" style="align-self: flex-end;">，</div>
-            <el-input name="d" :style="setInputWidth(item.value)" placeholder="请输入内容"></el-input>
-          </div>
-          <div v-if="index === 1" style="display: flex; margin-top: 3px;">
-            <el-input name="d" :style="setInputWidth(item.value)" placeholder="请输入内容"></el-input>
-          </div> -->
-          <!-- <div v-if="item.value === 'unique_code'" style="margin: 0 5px;">-</div>
-          <el-input v-if="item.value === 'unique_code'" name="d" :style="setInputWidth(item.value)" placeholder="请输入内容"></el-input> -->
-          <div :style="setInputWidth(item.value)" style="display: flex; justify-content: flex-end;margin-top: 3px;">
-            <el-button type="primary" :disabled="item.selectData.length == 4" style="margin-left: 10px; padding: 10px;" @click="handleAddInputItem(index)"><i class="el-icon-plus"></i></el-button>
-            <el-button type="primary" :disabled="item.selectData.length == 1" style="margin-left: 10px; padding: 10px;" @click="handleDelInputItem(index)"><i class="el-icon-delete"></i></el-button>
+            <div v-if="inputSeparator(item.value, i) == 1" style="align-self: center;margin: 0 5px;">-</div>
+            <div v-if="inputSeparator(item.value, i) == 2" style="align-self: flex-end;">，</div>
+            <el-input :class="showInputAnimation(item, i)" :style="setInputWidth(item)" placeholder="请输入内容" maxlength="20" @input="handelFormItemInput(index, i, $event)"></el-input>
           </div>
         </div>
-      </div>
-      <div class="form-item" v-if="stayAddList.length > 0">
-        <!-- <div class="item-label" style="color: rgb(64, 158, 255);">添加字段: </div>
-        <el-select class="stay-input" v-model="addoptns" placeholder="添加键" @change="handleAddOption">
-          <el-option
-            v-for="item in stayAddList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.label"
-            :disabled="item.disabled">
-          </el-option>
-        </el-select> -->
+        <div style="display: flex; justify-content: flex-end;margin-top: 3px;">
+          <el-button type="primary" :disabled="setformAddBtnDisabled(item)" style="padding: 10px;" @click="handleAddInputItem(index, item)"><i class="el-icon-plus"></i></el-button>
+          <el-button type="primary" :disabled="setformDelBtnDisabled(item)" style="margin-left: 10px; padding: 10px;" @click="handleDelInputItem(index, item)"><i class="el-icon-delete"></i></el-button>
+        </div>
       </div>
     </div>
     <div class="bottom-tools">
@@ -55,13 +32,14 @@
       </div>
       <div class="btn-wrap" style="margin-left: -20px;">
         <el-button @click="handleClear">取消</el-button>
-        <el-button type="primary" @click="handleFinish"><i class="el-icon-download"></i>确定</el-button>
+        <el-button type="primary" :disabled="isBtnFinish" @click="handleFinish"><i :class="btnFinishIcon(isBtnFinish)"></i>确定</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { Message } from 'element-ui';
 import selectLister from './select-lister.vue';
 
 export default {
@@ -69,10 +47,10 @@ export default {
     selectLister
   },
   props: {
-    show: {    // 是否展示组件
+    show: {            // 是否展示组件
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
@@ -81,7 +59,7 @@ export default {
           label: '瑞达',
           options: [
             {
-              value: 'ruida_fund_reconciliation',
+              value: 'ruida_client_funds',
               label: '瑞达资金表',
               disabled: false,
             },
@@ -91,7 +69,7 @@ export default {
               disabled: false,
             },
             {
-              value: 'ruida_cash_in_and_out',
+              value: 'ruida_deposit_and_withdrawal',
               label: '瑞达出入金表',
               disabled: false,
             }
@@ -101,12 +79,12 @@ export default {
           label: '三立',
           options: [
             {
-              value: 'sanli_customer_funds',
+              value: 'sanli_client_funds',
               label: '三立客户资金表',
               disabled: false,
             },
             {
-              value: 'sanli_customer_transaction',
+              value: 'sanli_transaction',
               label: '三立客户成交表',
               disabled: false,
             }
@@ -116,17 +94,17 @@ export default {
           label: '金控',
           options: [
             {
-              value: 'jinkong_cash_in_and_out',
+              value: 'jinkong_deposit_and_withdrawal',
               label: '金控出入金表',
               disabled: false,
             },
             {
-              value: 'jinkong_fund_reconciliation',
+              value: 'jinkong_client_funds',
               label: '金控资金统计表',
               disabled: false,
             },
             {
-              value: 'jinkong_transaction_statistics',
+              value: 'jinkong_transaction',
               label: '金控交易统计表',
               disabled: false,
             }
@@ -136,12 +114,12 @@ export default {
           label: '恒银',
           options: [
             {
-              value: 'hengyin_customer_funds',
+              value: 'hengyin_client_funds',
               label: '恒银客户资金表',
               disabled: false,
             },
             {
-              value: 'hengyin_customer_transaction',
+              value: 'hengyin_transaction',
               label: '恒银客户成交表',
               disabled: false,
             }
@@ -151,17 +129,17 @@ export default {
           label: '华鑫',
           options: [
             {
-              value: 'huaxin_cash_in_and_out',
+              value: 'huaxin_deposit_and_withdrawal',
               label: '华鑫出入金表',
               disabled: false,
             },
             {
-              value: 'huaxin_fund_reconciliation',
+              value: 'huaxin_client_funds',
               label: '华鑫资金对账表',
               disabled: false,
             },
             {
-              value: 'huaxin_transaction_statistics',
+              value: 'huaxin_transaction',
               label: '华鑫交易统计表',
               disabled: false,
             }
@@ -188,8 +166,8 @@ export default {
           ]
         },
       ],
-      addoptns: '',
-      options: [{
+      addoptns: '',        // 添加字段model绑定参数
+      options: [{          // 字段选项集合
         value: 'unique_code',
         label: '唯一标识码',
         disabled: false,
@@ -200,18 +178,19 @@ export default {
         disabled: false,
         selectData: [''],
       },{
-        value: 'customer_name',
+        value: 'customer_number',
         label: '客户号',
         disabled: false,
         selectData: [''],
       },
       {
-        value: 'customer_number',
+        value: 'customer_name',
         label: '客户姓名',
         disabled: false,
         selectData: [''],
       }],
-      stayAddList: [
+      newAddInput: {},     // 点击输入框新增按钮时记录的参数
+      stayAddList: [       // 待添加字段集合
         {
           value: 'deposit',
           label: '入金',
@@ -261,7 +240,7 @@ export default {
           selectData: [''],
         },
       ],
-
+      isBtnFinish: false,  // 确定按钮是否禁用 true: 禁用
     }
   },
 
@@ -271,31 +250,116 @@ export default {
 
   methods: {
     /**
-     * 设置输入框宽度
+     * @param {object} data
+     * @param {Number} index
+     * @todo 控制字段输入框旁边的添加按钮是否使用
      */
-    setInputWidth(val) {
-      let style = '';
-      switch (val) {
-        // case 'unique_code':
-        //   style = 'width: 100px;';
-        //   break;
-        case '':
+    setformAddBtnDisabled(data, index) {
+      let isDisable = false;
 
-          break;
-        case '':
-
+      switch (data.value) {
+        case 'unique_code':
+        case 'deposit':
+        case 'withdrawal':
+        case 'deposit_and_withdrawal':
+        case 'handling_fee':
+        case 'hand_in_fee':
+        case 'retention_fee':
+        case 'ending_equity':
+        case 'total_profit_and_loss':
+          // 有两个输入框时禁止
+          isDisable = data.selectData.length === 2;
           break;
 
         default:
-          style = 'width: 120px;';
+          isDisable = data.selectData.length === 4;
           break;
+      }
+
+      return isDisable;
+    },
+    /**
+     * @param {object} data
+     * @todo 控制字段输入框旁边的删除按钮是否使用
+     */
+    setformDelBtnDisabled(data) {
+      let isDisable = false;
+
+      switch (data.value) {
+        case 'unique_code':
+        case 'category':
+        case 'customer_number':
+        case 'customer_name':
+          // 有两个输入框时禁止
+          isDisable = data.selectData.length === 1;
+          break;
+      }
+
+      return isDisable;
+    },
+
+    /**
+     * 确定按钮图标
+     */
+    btnFinishIcon(val) {
+      return val ? 'el-icon-loading' : 'el-icon-download';
+    },
+    /**
+     * 设置输入框宽度
+     */
+    setInputWidth(data) {
+      let style = '';
+      if (data.selectData.length > 1) {
+        style = 'width: 110px';
+      } else {
+        style = 'width: 235px';
       }
 
       return style;
     },
+    /**
+     * 输入框分割符
+     */
+    inputSeparator(label, index) {
+      if (index % 2 === 0) return 0;
+      switch (label) {
+        case 'unique_code':
+        case 'deposit':
+        case 'withdrawal':
+        case 'deposit_and_withdrawal':
+        case 'handling_fee':
+        case 'hand_in_fee':
+        case 'retention_fee':
+        case 'ending_equity':
+        case 'total_profit_and_loss':
+          return 1;
+
+        default:
+          return 2;
+      }
+    },
+    /**
+     * 设置input输入框弹出效果
+     */
+    showInputAnimation(data, index) {
+      if (this.newAddInput.value === data.value && index === data.selectData.length - 1) {
+        return 'show-input';
+      } else {
+        return '';
+      }
+    },
+    /**
+     * 设置确定按钮是否奏效
+     * @method
+     */
+    setBtnFinish(val) {
+      this.isBtnFinish = val;
+    },
+
 
     /**
      * 输入值
+     * @callback input
      */
     handelFormItemInput(index, i, val) {
       this.options[index].selectData[i] = val;
@@ -304,14 +368,44 @@ export default {
     /**
      * 添加键输入框
      */
-    handleAddInputItem(index) {
+    handleAddInputItem(index, data) {
       this.options[index]['selectData'].push('');
+
+      this.newAddInput = data;
+      setTimeout(() => {
+        this.newAddInput = {};
+      }, 300);
     },
     /**
      * 删除键输入框
+     * @param index
+     * @param data 当前按钮上字段信息
+     * @callback 输入框旁边删除按钮
      */
-    handleDelInputItem(index) {
-      this.options[index]['selectData'].pop();
+    handleDelInputItem(index, data) {
+      let isBaseField = 0;
+      switch (data.value) {
+        case 'unique_code':
+        case 'category':
+        case 'customer_number':
+        case 'customer_name':
+          isBaseField = 1;
+          break;
+      }
+
+      // 基础字段只删除输入框(剩一个不会被删除)
+      if (isBaseField || data.selectData.length > 1) {
+        this.options[index]['selectData'].pop();
+      } else if (data.selectData.length === 1) {
+      // 额外新增的字段删除0个输入框直接删除字段
+        this.options.some((item, index) => {
+          if (item.value === data.value) {
+            const arr = this.options.splice(index, 1);
+            this.stayAddList.unshift(arr[0]);
+            return true;
+          }
+        });
+      }
     },
 
     /**
@@ -358,7 +452,7 @@ export default {
         const item = this.options[i];
 
         // 客户姓名后全移除
-        if (item.value === 'customer_number') {
+        if (item.value === 'customer_name') {
           dels = this.options.splice(i + 1, len-1-i);
           break;
         }
@@ -375,6 +469,8 @@ export default {
 
     /**
      * 确定按钮
+     * @callback click
+     * @todo 按照选定条件导出数据
      */
     handleFinish() {
       const options = this.options;
@@ -400,13 +496,6 @@ export default {
 </script>
 
 <style>
-.show {
-
-}
-.hide {
-
-}
-
 .form-group {
   margin-bottom: 20px;
   border-bottom: 2px solid #ddd;
@@ -419,11 +508,11 @@ export default {
 }
 
 .form-item {
-  width: 23%;
+  width: 24%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-right: 2%;
+  margin-right: 1%;
   margin-bottom: 25px;
 }
 
@@ -448,6 +537,11 @@ export default {
   margin-right: 10px;
   font-size: 15px;
 }
+
+.item-input-wrap .show-input {
+  animation: life .25s forwards;
+}
+
 
 .bottom-tools {
   display: flex;

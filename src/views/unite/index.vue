@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" v-loading="loading">
     <div class="header">
-      <formGroup :show="showFormGroup" @clear="showFormGroup=false" @finish="handleChoiceDownLoad" />
+      <formGroup ref="formGroup" :show="showFormGroup" @clear="showFormGroup=false" @finish="handleChoiceDownLoad" />
       <funtBtns :headerTitle="headerTitle" @import="handleToImport" @download="handleToDownload" @more-down="handleMoreDown" />
     </div>
     <div class="main">
@@ -41,11 +41,12 @@
 
 import { Message } from 'element-ui';
 
-import { getTableHeader, getTableDatas, importExcel, downLoadTable } from '@/api/excel';
+import { getTableHeader, getTableDatas, importExcel, downLoadTable, mergeExport } from '@/api/excel';
 
 import formGroup from './components/form-group.vue';
 import funtBtns from './components/funt-btns.vue';
 
+import { checkSameTable, isFinsTest } from '@/utils/utils.js';
 import { switchTitle } from './showViewTools.js';
 
 export default {
@@ -189,6 +190,56 @@ export default {
         });
     },
 
+
+    /**
+     * 获取条件导出的数据
+     * @method
+     */
+    getChoiceTables(tableNames, options) {
+      const selectData = {};
+      const selectColumns = {};
+
+      const isTest = options.some(item => {
+        // 去除首尾空格
+        item.selectData.forEach((m, i) => {
+          item.selectData[i] = m.trim();
+        })
+
+        // 对字段内容值验证
+        let condition = item.value === 'unique_code' ? item.value : 'default';
+        const result = isFinsTest[condition](item);
+        if (!result) return true;
+
+        selectColumns[item.value] = item.label;
+
+        selectData[item.value] = item.selectData;
+      });
+
+      if (isTest) return;
+
+      // console.log('tableNames: ');
+      // console.log(tableNames);
+      // console.log('selectData: ');
+      // console.log(selectData);
+      // console.log('selectColumns: ');
+      // console.log(selectColumns);
+
+      this.$refs.formGroup.setBtnFinish(true);   // 禁用'确定'按钮
+
+      mergeExport(tableNames, selectColumns, selectData)
+        .then(res => {
+          this.$refs.formGroup.setBtnFinish(false);
+          console.log(res);
+          if (res.data.code === '1') {
+            window.open(res.data.url);
+          } else {
+            Message.error(res.data.message);
+          }
+        }).catch(() => {
+          Message.error('操作失败，请重试');
+        });
+    },
+
     /**
      * 确定条件导出
      * @callback click
@@ -196,12 +247,44 @@ export default {
      */
     handleChoiceDownLoad(e) {
       console.log(e);
+      const tableNames = [];
+
+      if (e.tableList.length === 0) {
+        Message.error('未选中表');
+        return;
+      }
+
+
+      // 表名集赋值
+      const _index = e.tableList[0]['value'].indexOf('_');
+      const tabType = e.tableList[0]['value'].substr(_index + 1);
+      let isSameTable = false;
+      e.tableList.forEach((item, index) => {
+        tableNames.push(item.value);
+        if (index !== 0 && checkSameTable[tabType](item.value)) isSameTable = true;
+      });
+
+      if (!isSameTable) {
+        // Message.success('同类型');
+        this.getChoiceTables(tableNames, e.options);
+      } else {
+        this.$confirm('选择的表属于不同类型，是否继续？', '提示', {
+          type: 'warning'
+        }).then(() => {  // 确定
+          this.getChoiceTables(tableNames, e.options);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消操作'
+          });
+        });
+      }
     },
 
     /**
      * 条件导出按钮
      * @callback click
-     * @todo 显示条件表单
+     * @todo 显示条件表单组件
      */
     handleMoreDown() {
       this.showFormGroup = !this.showFormGroup;
@@ -236,27 +319,6 @@ export default {
       return (num + 3) * 15 + '';
     },
 
-
-
-    /**
-     * 确定批量导出按钮
-     * @callback click
-     */
-    handleFinishMultipleChoice(e) {
-      console.log(e);
-      const data = e.data;
-      const keys = Object.keys(data);
-
-      if (!data || keys.length === 0) {
-        Message.error('请选择条件');
-        return;
-      }
-
-
-      this.loading = true;
-
-      //...
-    }
   },
 
   created() {
@@ -286,10 +348,9 @@ export default {
   z-index: -9999;
 }
 
-/* .main {
-  max-height: 500px;
-  overflow-y: auto;
-} */
+.main {
+  padding-right: 20px;
+}
 
 
 

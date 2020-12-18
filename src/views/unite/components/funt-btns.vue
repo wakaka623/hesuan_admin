@@ -9,7 +9,7 @@
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
         <el-button type="primary" @click="handleUpload">导入</el-button>
         <el-button type="primary" @click="handleDownload">导出</el-button>
-        <el-button type="primary" @click="handleMoreDownload">批量导出</el-button>
+        <el-button type="primary" @click="handleMoreDownload">条件导出</el-button>
       </div>
     </div>
   </div>
@@ -208,20 +208,21 @@ export default {
 }
 
 .title-container {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 20px;
-}
-
-.title-container::before {
-  content: '';
 }
 
 .title {
   color: #409EFF;
   font-size: 22px;
-  margin-left: 20px;
+}
+
+.title-container .funt-warp {
+  position: absolute;
+  right: 20px;
 }
 
 .select-single {
