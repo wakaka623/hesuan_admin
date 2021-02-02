@@ -24,64 +24,58 @@
 
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span>{{$t('login.username')}} : admin</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
       </div>
       <div class="tips">
         <span style="margin-right:18px;">{{$t('login.username')}} : editor</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
-      </div>
+      </div> -->
 
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
+      <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{'注册'}}</el-button> -->
     </el-form>
-
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{$t('login.thirdpartyTips')}}
-      <br/>
-      <br/>
-      <br/>
-      <social-sign />
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { Message } from 'element-ui'
+import { mapMutations } from 'vuex'
+import { Form, Message } from 'element-ui'
 
-import { isvalidUsername } from '@/utils/validate'
+// import { isvalidUsername,isvalidUser } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
-import { loginByUsername } from '@/api/login'
+
+
 
 export default {
   components: { LangSelect, SocialSign },
   name: 'login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
+    // const validateUsername = (rule, value, callback) => {
+    //   if (!isvalidUsername(value)) {
+    //     callback(new Error('用户不存在'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码长度小于6位'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
+      
       passwordType: 'password',
       loading: false,
       showDialog: false
@@ -96,10 +90,14 @@ export default {
       }
     },
     handleLogin() {
+      //  loginByUsername(this.username,this.password).then(res=>{
+      //    console.log(res);
+      //   })
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(res => {
             this.loading = false
             this.$router.push({ path: '/' })
           }).catch(() => {
@@ -129,10 +127,17 @@ export default {
       //     this.$router.push({ path: '/' })
       //   })
       // }
-    }
+    },
+    ...mapMutations([
+      'SET_TEST'
+    ]),
   },
   created() {
     // window.addEventListener('hashchange', this.afterQRScan)
+  },
+  mounted() {
+    // this.SET_TEST();
+    this.$store.dispatch('test');
   },
   destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)
@@ -241,6 +246,9 @@ $light_gray:#eee;
     position: absolute;
     right: 35px;
     bottom: 28px;
+  }
+  .dialog{
+    height: 60%;
   }
 }
 </style>

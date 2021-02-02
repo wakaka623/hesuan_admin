@@ -13,15 +13,16 @@ module.exports = {
     proxyTable: {
       '/api': {
         // target: 'https://wechat.jin808.com/index.php?s=',
-        target: 'http://192.168.1.15:80/tp5/public/index.php/?s=',
+        target: 'http://39.101.134.203:84/index.php/?s=',
         changeOrigin: true, //允许跨域
         pathRewrite: {
           '^/api': ''
         }
       },
       '/a': {
-        target: 'http://110.80.34.170:9081',
+        target: 'http://192.168.0.106:80/CRM_API/public/index.php?s=',
         changeOrigin: true, //允许跨域
+        secure:false,
         pathRewrite: {
           '^/a': ''
         }

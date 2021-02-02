@@ -69,29 +69,3 @@ export function switchTitle (name) {
 
   return title;
 }
-
-export function setClientFundsTotal() {
-  const column = [
-      { label: '期初权益', prop: 'initial_equity' },
-      { label: '盈亏总额', prop: 'total_profit_and_loss'},
-      { label: '手续费', prop: 'service_charge' },
-      { label: '入金', prop: 'in_gold' },
-      { label: '出金', prop: 'out_of_gold' },
-      { label: '出入金', prop: 'cash_in_and_out' },
-      { label: '期末可用', prop: 'available_at_the_end_of_the_period' },
-      { label: '保证金', prop: 'bond' },   
-  ]
-  return column
-}
-
-export function setTransactionTotal() {
-  const column = [
-      { label: '客户手续费', prop: 'customer_service_charge' },
-      { label: '平仓盈亏', prop: 'profit_and_loss_of_closing_position'},
-      { label: '成交金额', prop: 'transaction_amount' },
-      { label: '成交手数', prop: 'number_of_transactions' },
-      { label: '平今手数', prop: 'pingjin_hand_count' },
-      { label: '平今手续费', prop: 'pingjin_service_charge' },
-  ]
-  return column
-}

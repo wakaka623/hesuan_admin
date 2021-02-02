@@ -48,18 +48,6 @@
         @current-change="handleCurPageChange">
       </el-pagination>
     </div>
-    <!-- <el-table
-      :data="[]"
-      border
-      style="width: 100%">
-      <el-table-column
-        v-for="(item, index) in totalClumn"
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-        width="180">
-      </el-table-column>
-    </el-table> -->
   </div>
 </template>
 
@@ -79,8 +67,7 @@ import formGroup from './components/form-group.vue';
 import funtBtns from './components/funt-btns.vue';
 
 import { checkSameTable, isFinsTest } from '@/utils/utils.js';
-import { switchTitle,setClientFundsTotal,setTransactionTotal } from './showViewTools.js';
-
+import { switchTitle } from './showViewTools.js';
 
 export default {
   name: '',  // path值路由名动态变更
@@ -106,8 +93,12 @@ export default {
           date2:'',
           account:'',
           name:''
-        },              
-      // totalClumn: [],     // 合计表标题栏
+      },
+      sumTable: [{
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }]             
     }
   },
   computed: {
@@ -390,19 +381,6 @@ export default {
 
     // 获取表格数据
     this.handleGetTableDatas();
-    // let str=this.name;//截取后4位
-    // let name=str.substring(str.length-12)
-    // // 获取表格总计栏标题
-    // switch (name) {
-    //   case 'client_funds':
-    //     this.totalClumn = setClientFundsTotal()
-    //     break;
-    //   case '_transaction':
-    //     this.totalClumn = setTransactionTotal()
-    //     break;  
-    //   default:
-    //     break;
-    // }
   },
 }
 </script>

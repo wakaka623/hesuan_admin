@@ -1,19 +1,19 @@
-// import request from '@/utils/request'
-import axios from 'axios';
+import request from '@/utils/request'
+
 
 /**
  * 表格导入
  * @param {Object} file 表格文件对象
  */
 export function importExcel(file) {
-  const data = file;
+    const data = file;
 
-  return axios({
-    url: '/api/import/excel',
-    method: 'post',
-    headers: {'Content-Type': 'multpart/form-data'},
-    data
-  });
+    return request({
+        url: '/import/excel',
+        method: 'post',
+        headers: { 'Content-Type': 'multpart/form-data' },
+        data
+    });
 }
 
 
@@ -22,15 +22,15 @@ export function importExcel(file) {
  * @param {String} tableName 要获取的表名（数据库表名）
  */
 export function getTableHeader(tableName) {
-  const data = {
-    table_name: tableName
-  };
+    const data = {
+        table_name: tableName
+    };
 
-  return axios({
-    url: '/api/import/excel/columns',
-    method: 'post',
-    data
-  });
+    return request({
+        url: '/import/excel/columns',
+        method: 'post',
+        data
+    });
 }
 
 
@@ -38,17 +38,19 @@ export function getTableHeader(tableName) {
  * 获取表格数据
  * @param {String} tableName 要获取的表名（数据库表名）
  */
-export function getTableDatas(tableName, page = 1) {
-  const data = {
-    table_name: tableName,
-    page
-  };
+export function getTableDatas(tableName, page = 1, group, isadmin) {
+    const data = {
+        table_name: tableName,
+        page,
+        group,
+        isadmin
+    };
 
-  return axios({
-    url: '/api/import/excel/get_table_data',
-    method: 'post',
-    data
-  });
+    return request({
+        url: '/import/excel/get_table_data',
+        method: 'post',
+        data
+    });
 }
 
 
@@ -57,15 +59,15 @@ export function getTableDatas(tableName, page = 1) {
  * @param {Array} tableData
  */
 export function downLoadTable(tableData) {
-  const data = {
-    select_data: tableData
-  };
+    const data = {
+        select_data: tableData
+    };
 
-  return axios({
-    url: '/api/import/excel/download',
-    method: 'post',
-    data
-  });
+    return request({
+        url: '/import/excel/download',
+        method: 'post',
+        data
+    });
 }
 
 
@@ -76,15 +78,15 @@ export function downLoadTable(tableData) {
  * @param {Array} selectData 选中的数据列表
  */
 export function mergeExport(tableNames, selectColumns, selectData) {
-  const data = {
-    table_names: tableNames,
-    select_data: selectData,
-    select_columns: selectColumns,
-  };
+    const data = {
+        table_names: tableNames,
+        select_data: selectData,
+        select_columns: selectColumns,
+    };
 
-  return axios({
-    url: '/api/import/excel/merge_export',
-    method: 'post',
-    data
-  });
+    return request({
+        url: '/import/excel/merge_export',
+        method: 'post',
+        data
+    });
 }

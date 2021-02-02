@@ -8,9 +8,9 @@
     <div class="header">
       <el-row :gutter="20" style="display: flex; justify-content: center;">
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
-        <el-button type="primary" @click="handleUpload">导入</el-button>
-        <el-button type="primary" @click="handleDownload">导出</el-button>
-        <el-button type="primary" @click="handleBatchUpload">条件导出</el-button>
+        <el-button type="primary" @click="handleUpload" :disabled='this.disable==false?true:false'>导入</el-button>
+        <el-button type="primary" @click="handleDownload" :disabled='this.disable==false?true:false'>导出</el-button>
+        <el-button type="primary" @click="handleBatchUpload" :disabled='this.disable==false?true:false'>条件导出</el-button>
       </el-row>
     </div>
     <div class="main">
@@ -73,6 +73,13 @@ export default {
       multipleSelection: [], // 当前页码表格选中的数据
       isShowMultipleChoiceCase: false,   // 显示 multipleChoiceCase 组件
       remoteChoiceList: [],              // 远程搜索关键字列表
+      
+    }
+  },
+   created() {
+    let user=this.$cookies.get('user');
+    if(user=='admin'){
+      this.disable=!this.disable
     }
   },
   computed: {
@@ -89,6 +96,7 @@ export default {
      * @param page 页码 （10条数据分1页）
      */
     handleGetTableDatas(page = 1) {
+      console.log('调用了吗');
       this.loading = true;
       getTableDatas(TABLE_NAME, page)
         .then(res => {
@@ -292,7 +300,7 @@ export default {
         });
     }
   },
-  mounted() {
+  mounted() { 
     // 获取表格标题栏
     getTableHeader(TABLE_NAME)
       .then(res => {
