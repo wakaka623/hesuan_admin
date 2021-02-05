@@ -21,9 +21,11 @@ export function importExcel(file) {
  * 获取表格标题
  * @param {String} tableName 要获取的表名（数据库表名）
  */
-export function getTableHeader(tableName) {
+export function getTableHeader(tableName,group,isadmin) {
     const data = {
-        table_name: tableName
+        table_name: tableName,
+        group,
+        isadmin
     };
 
     return request({
@@ -38,12 +40,16 @@ export function getTableHeader(tableName) {
  * 获取表格数据
  * @param {String} tableName 要获取的表名（数据库表名）
  */
-export function getTableDatas(tableName, page = 1, group, isadmin) {
+export function getTableDatas(tableName, page = 1, group, isadmin,startDate,endDate,account,customerName) {
     const data = {
         table_name: tableName,
         page,
         group,
-        isadmin
+        isadmin,
+        startDate,
+        endDate,
+        account,
+        customerName
     };
 
     return request({

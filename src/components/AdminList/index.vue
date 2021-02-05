@@ -2,8 +2,9 @@
 <div>
     <el-table
     v-if="tableColShow"
+    border
     :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-    style="width: 100%">
+    style="width: 80%;margin-left:10%">
     <el-table-column
       label="ID"
       width="180">
@@ -20,7 +21,7 @@
     </el-table-column>
     <el-table-column
       label="密码"
-      width="180">
+      width="230">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.password}}</span>
       </template>
@@ -34,7 +35,7 @@
     </el-table-column>
     <el-table-column
       label="管理员类别"
-      width="180">
+      width="120">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.is_admin }}</span>
       </template>
@@ -137,8 +138,10 @@ export default {
 .paging{
   display: flex;
   justify-content: center;
+  /* transform: translate(-10%); */
   padding-top: 10px;
   padding-bottom: 50px;
+  
 }
 
 </style>

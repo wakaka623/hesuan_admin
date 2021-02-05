@@ -1,26 +1,37 @@
 <template>
   <div class="app-container" v-loading="loading">
-    <div class="header">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="搜索时间">
-          <el-col :span="11">
-            <el-date-picker type="date" placeholder="开始日期" v-model="formInline.date1" style="width: 100%;"></el-date-picker>
-          </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-date-picker type="date" placeholder="结束日期" v-model="formInline.date2" style="width: 100%;"></el-date-picker>
-          </el-col>
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <!-- <el-form-item label="开始时间">
+          <el-input v-model="formInline.date1" placeholder="开始时间"></el-input>
+        </el-form-item>
+        <el-form-item label="结束时间">
+          <el-input v-model="formInline.date2" placeholder="结束时间"></el-input>
+        </el-form-item> -->
+        <el-form-item label="搜索区间" required>
+        <el-col :span="11">
+        <el-form-item prop="date1">
+          <el-date-picker type="date" placeholder="选择开始日期" v-model="formInline.date1" style="width: 100%;"></el-date-picker>
+        </el-form-item>
+        </el-col>
+        <el-col class="line" :span="2">-</el-col>
+        <el-col :span="11">
+        <el-form-item prop="date2">
+          <el-date-picker type="date" placeholder="选择结束日期" v-model="formInline.date2" style="width: 100%;"></el-date-picker>
+        </el-form-item>
+        </el-col>
         </el-form-item>
         <el-form-item label="客户账户">
           <el-input v-model="formInline.account" placeholder="客户账号"></el-input>
         </el-form-item>
         <el-form-item label="客户姓名">
-          <el-input v-model="formInline.name" placeholder="客户姓名"></el-input>
+          <el-input v-model="formInline.customerame" placeholder="客户姓名"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
+    <div class="header">
       <formGroup ref="formGroup" :show="showFormGroup" @clear="showFormGroup=false" @finish="handleChoiceDownLoad" />
       <funtBtns :headerTitle="headerTitle" @import="handleToImport" @download="handleToDownload" @more-down="handleMoreDown" />
     </div>
@@ -79,7 +90,7 @@ import formGroup from './components/form-group.vue';
 import funtBtns from './components/funt-btns.vue';
 
 import { checkSameTable, isFinsTest } from '@/utils/utils.js';
-import { switchTitle,setClientFundsTotal,setTransactionTotal } from './showViewTools.js';
+import { switchTitle } from './showViewTools.js';
 
 
 export default {
@@ -105,7 +116,7 @@ export default {
           date1:'',
           date2:'',
           account:'',
-          name:''
+          customerame:''
         },              
       // totalClumn: [],     // 合计表标题栏
     }
@@ -119,14 +130,27 @@ export default {
     }
   },
   created(){
+     
     this.handleGetTableDatas()
+    
   },
   methods: {
     /**
-     * 通用搜索
+     * 搜索
      */
      onSubmit() {
-        console.log('submit!');
+        this.handleGetTableDatas()
+      },
+      /**
+       * 重置搜索
+       */
+      onReset(){
+        this.formInline.date1=''
+        this.formInline.date2=''
+        this.formInline.account=''
+        this.formInline.customerame=''
+        this.handleGetTableDatas()
+
       },
     /**
      * 获取表格数据
@@ -136,7 +160,7 @@ export default {
       let group=window.sessionStorage.getItem('group')
       let isadmin=window.sessionStorage.getItem('isadmin')
       this.loading = true;
-      getTableDatas(this.name, page,group,isadmin)
+      getTableDatas(this.name, page,group,isadmin,this.formInline.date1,this.formInline.date2,this.formInline.account,this.formInline.customerame)
         .then(res => {
           console.log(res);
           const data = res.data;
@@ -156,27 +180,27 @@ export default {
     /**
      * 对表格数据分页
      */
-    handleSplitTableData(tabData) {
-      let r = [];
-      const arr = [];
+    // handleSplitTableData(tabData) {
+    //   let r = [];
+    //   const arr = [];
 
-      tabData.forEach((item, index) => {
-        r.push(item);
+    //   tabData.forEach((item, index) => {
+    //     r.push(item);
 
-        // 逢10入一页
-        if ((index + 1) % 10 === 0) {
-          arr.push(r);
-          r = [];
-        }
-      });
+    //     // 逢10入一页
+    //     if ((index + 1) % 30 === 0) {
+    //       arr.push(r);
+    //       r = [];
+    //     }
+    //   });
 
-      if (r.length !== 0) {
-        arr.push(r);
-        r = [];
-      }
+    //   if (r.length !== 0) {
+    //     arr.push(r);
+    //     r = [];
+    //   }
 
-      this.tabPagesData = arr;
-    },
+    //   this.tabPagesData = arr;
+    // },
 
     /**
      * 导入
@@ -363,7 +387,7 @@ export default {
      * 设置单元格宽度
      */
     setTableBoxWidth(val) {
-      const num = val.length;
+      const num = val.length+3;
 
       if (val === '唯一标识码') return '200';
 
@@ -379,17 +403,19 @@ export default {
   mounted() {
 
     this.headerTitle = switchTitle(this.name);
-
+    let group=window.sessionStorage.getItem('group')
+    let isadmin=window.sessionStorage.getItem('isadmin')
     // 获取表格标题栏(键值)
-    getTableHeader(this.name)
+    getTableHeader(this.name,group,isadmin)
       .then(res => {
         console.log(res);
 
         this.tableHeadData = res.data;
       });
 
-    // 获取表格数据
+      // 获取表格数据
     this.handleGetTableDatas();
+    
     // let str=this.name;//截取后4位
     // let name=str.substring(str.length-12)
     // // 获取表格总计栏标题
@@ -417,6 +443,24 @@ export default {
   padding-right: 20px;
 }
 
+.main /deep/ .el-table {
+  font-size: 12px;
+}
+
+.main /deep/ .table-header-cells,
+.main /deep/ .table-cells {
+  height: auto !important;
+  padding: 5px 0 !important;
+}
+
+.main /deep/ .el-table--medium td,
+.main /deep/ .el-table--medium th {
+  padding: 5px 0 !important;
+}
+.main /deep/ .el-table td,
+.main /deep/ .el-table th {
+  padding: 0 !important;
+}
 
 
 .table-header-cells {
@@ -442,8 +486,7 @@ export default {
   justify-content: flex-start;
   /* padding-bottom: -10px; */
 }
-.el-col-2{
-  width: 5px;
+.el-col-2 {
+    width: 4.33333%;
 }
-
 </style>
