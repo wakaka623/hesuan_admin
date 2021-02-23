@@ -40,7 +40,7 @@ export function getTableHeader(tableName,group,isadmin) {
  * 获取表格数据
  * @param {String} tableName 要获取的表名（数据库表名）
  */
-export function getTableDatas(tableName, page = 1, group, isadmin,startDate,endDate,account,customerName) {
+export function getTableDatas(tableName, page = 1, group, isadmin,startDate,endDate,account,customerName,searchGroup,sortField,sortType) {
     const data = {
         table_name: tableName,
         page,
@@ -49,7 +49,10 @@ export function getTableDatas(tableName, page = 1, group, isadmin,startDate,endD
         startDate,
         endDate,
         account,
-        customerName
+        customerName,
+        searchGroup,
+        sortField,
+        sortType
     };
 
     return request({
@@ -92,6 +95,22 @@ export function mergeExport(tableNames, selectColumns, selectData) {
 
     return request({
         url: '/import/excel/merge_export',
+        method: 'post',
+        data
+    });
+}
+/**
+ * 全部导出
+ *
+ */
+export function exportALL(tableNames) {
+    const data = {
+        table_names: tableNames,
+        
+    };
+
+    return request({
+        url: '/import/excel/exportExcel',
         method: 'post',
         data
     });

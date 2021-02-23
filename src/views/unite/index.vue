@@ -26,6 +26,9 @@
         <el-form-item label="客户姓名">
           <el-input v-model="formInline.customerame" placeholder="客户姓名"></el-input>
         </el-form-item>
+        <el-form-item label="组别" v-if="isShowSearchGroup">
+          <el-input v-model="formInline.searchGroup" placeholder="组别"></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button type="primary" @click="onReset">重置</el-button>
@@ -43,9 +46,10 @@
         header-cell-class-name="table-header-cells"
         cell-class-name="table-cells"
         row-class-name="table-rows"
+        @sort-change="changeSort"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column v-for="(val, key, index) in tableHeadData" :key="index" :prop="key" :width="setTableBoxWidth(val)" :label="val"></el-table-column>
+        <el-table-column v-for="(val, key, index) in tableHeadData" :key="index" :prop="key" :width="setTableBoxWidth(val)" :label="val"  sortable="custom" show-overflow-tooltip=""></el-table-column>
         <!-- <el-table-column prop="name" label="姓名" width="120"></el-table-column>
         <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column> -->
       </el-table>
@@ -93,6 +97,7 @@ import { checkSameTable, isFinsTest } from '@/utils/utils.js';
 import { switchTitle } from './showViewTools.js';
 
 
+
 export default {
   name: '',  // path值路由名动态变更
   components: {
@@ -112,11 +117,15 @@ export default {
       multipleSelection: [], // 当前页码表格选中的数据
       isShowMultipleChoiceCase: true,   // 显示 multipleChoiceCase 组件
       remoteChoiceList: [], // 远程搜索关键字列表
+      isShowSearchGroup:true,//是否显示组搜索
+      sortField:'',//排序字段
+      sortType:false,//控制正序还是反序
       formInline: {
           date1:'',
           date2:'',
           account:'',
-          customerame:''
+          customerame:'',
+          searchGroup:''
         },              
       // totalClumn: [],     // 合计表标题栏
     }
@@ -130,11 +139,17 @@ export default {
     }
   },
   created(){
-     
-    this.handleGetTableDatas()
     
+    this.handleGetTableDatas()
+     
   },
   methods: {
+    //监听排序
+    changeSort(val){
+      this.sortType=!this.sortType
+      this.sortField = val.prop
+      this.handleGetTableDatas()
+    },
     /**
      * 搜索
      */
@@ -149,6 +164,7 @@ export default {
         this.formInline.date2=''
         this.formInline.account=''
         this.formInline.customerame=''
+        this.formInline.searchGroup=''
         this.handleGetTableDatas()
 
       },
@@ -160,7 +176,7 @@ export default {
       let group=window.sessionStorage.getItem('group')
       let isadmin=window.sessionStorage.getItem('isadmin')
       this.loading = true;
-      getTableDatas(this.name, page,group,isadmin,this.formInline.date1,this.formInline.date2,this.formInline.account,this.formInline.customerame)
+      getTableDatas(this.name, page,group,isadmin,this.formInline.date1,this.formInline.date2,this.formInline.account,this.formInline.customerame,this.formInline.searchGroup,this.sortField,this.sortType)
         .then(res => {
           console.log(res);
           const data = res.data;
@@ -388,9 +404,7 @@ export default {
      */
     setTableBoxWidth(val) {
       const num = val.length+3;
-
       if (val === '唯一标识码') return '200';
-
       return (num + 3) * 15 + '';
     },
 
@@ -415,6 +429,11 @@ export default {
 
       // 获取表格数据
     this.handleGetTableDatas();
+    // let isadmin=window.sessionStorage.getItem('isadmin')
+    if(isadmin=='0'){
+      this.isShowSearchGroup=!this.isShowSearchGroup
+
+    }
     
     // let str=this.name;//截取后4位
     // let name=str.substring(str.length-12)

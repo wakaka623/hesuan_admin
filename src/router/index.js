@@ -69,7 +69,7 @@ export const constantRouterMap = [{
         redirect: '/unite/index',
         component: Layout,
         meta: {
-            title: '恒银',
+            title: 'HY',
             icon: 'documentation',
             noCache: true
         },
@@ -87,6 +87,138 @@ export const constantRouterMap = [{
                 name: 'hengyin_transaction',
                 meta: { title: '客户成交表', icon: 'icon', noCache: true }
             }
+        ]
+    },
+    {
+        path: '/ruida',
+        alwaysShow: true,
+        redirect: '/unite/index',
+        component: Layout,
+        meta: {
+            title: 'RD',
+            icon: 'documentation',
+            noCache: true
+        },
+        children: [{
+                path: 'ruida_client_funds',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'ruida_client_funds',
+                meta: { title: '资金表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'ruida_transaction',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'ruida_transaction',
+                meta: { title: '成交表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'ruida_deposit_and_withdrawal',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'ruida_deposit_and_withdrawal',
+                meta: { title: '出入金表', icon: 'icon', noCache: true }
+            },
+        ]
+    },
+    {
+        path: '/sanli',
+        alwaysShow: true,
+        redirect: '/unite/index',
+        component: Layout,
+        meta: {
+            title: 'SL',
+            icon: 'documentation',
+            noCache: true
+        },
+        children: [{
+                path: 'sanli_client_funds',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'sanli_client_funds',
+                meta: { title: '客户资金表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'sanli_transaction',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'sanli_transaction',
+                meta: { title: '客户交易表', icon: 'icon', noCache: true }
+            },
+        ]
+    },
+    {
+        path: '/huaxin',
+        alwaysShow: true,
+        redirect: '/unite/index',
+        component: Layout,
+        meta: {
+            title: 'HX',
+            icon: 'documentation',
+            noCache: true
+        },
+        children: [{
+                path: 'huaxin_deposit_and_withdrawal',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'huaxin_deposit_and_withdrawal',
+                meta: { title: '出入金表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'huaxin_client_funds',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'huaxin_client_funds',
+                meta: { title: '资金对账表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'huaxin_transaction',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'huaxin_transaction',
+                meta: { title: '交易统计表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'huaixn_history',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'huaixn_history',
+                meta: { title: '历史成交表', icon: 'icon', noCache: true }
+            },
+        ]
+    },
+    {
+        path: '/jinkong',
+        alwaysShow: true,
+        redirect: '/unite/index',
+        component: Layout,
+        meta: {
+            title: 'JK',
+            icon: 'documentation',
+            noCache: true
+        },
+        children: [{
+                path: 'jinkong_deposit_and_withdrawal',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'jinkong_deposit_and_withdrawal',
+                meta: { title: '出入金表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'jinkong_client_funds',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'jinkong_client_funds',
+                meta: { title: '资金管理表', icon: 'icon', noCache: true }
+            },
+            {
+                path: 'jinkong_transaction',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'jinkong_transaction',
+                meta: { title: '交易统计表', icon: 'icon', noCache: true }
+            },
         ]
     },
     // {
@@ -135,131 +267,6 @@ export const asyncRouterMap = [
                 name: 'edit',
                 meta: { title: '编辑', icon: 'people', noCache: true }
             }
-        ]
-    },
-    {
-        path: '/ruida',
-        alwaysShow: true,
-        redirect: '/unite/index',
-        component: Layout,
-        meta: {
-            title: '瑞达',
-            icon: 'documentation',
-            noCache: true
-        },
-        children: [{
-                path: 'ruida_client_funds',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'ruida_client_funds',
-                meta: { title: '资金表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'ruida_transaction',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'ruida_transaction',
-                meta: { title: '成交表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'ruida_deposit_and_withdrawal',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'ruida_deposit_and_withdrawal',
-                meta: { title: '出入金表', icon: 'icon', noCache: true }
-            },
-        ]
-    },
-    {
-        path: '/sanli',
-        alwaysShow: true,
-        redirect: '/unite/index',
-        component: Layout,
-        meta: {
-            title: '三立',
-            icon: 'documentation',
-            noCache: true
-        },
-        children: [{
-                path: 'sanli_client_funds',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'sanli_client_funds',
-                meta: { title: '客户资金表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'sanli_transaction',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'sanli_transaction',
-                meta: { title: '客户交易表', icon: 'icon', noCache: true }
-            },
-        ]
-    },
-    {
-        path: '/jinkong',
-        alwaysShow: true,
-        redirect: '/unite/index',
-        component: Layout,
-        meta: {
-            title: '金控',
-            icon: 'documentation',
-            noCache: true
-        },
-        children: [{
-                path: 'jinkong_deposit_and_withdrawal',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'jinkong_deposit_and_withdrawal',
-                meta: { title: '出入金表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'jinkong_client_funds',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'jinkong_client_funds',
-                meta: { title: '资金管理表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'jinkong_transaction',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'jinkong_transaction',
-                meta: { title: '交易统计表', icon: 'icon', noCache: true }
-            },
-        ]
-    },
-    {
-        path: '/huaxin',
-        alwaysShow: true,
-        redirect: '/unite/index',
-        component: Layout,
-        meta: {
-            title: '华鑫',
-            icon: 'documentation',
-            noCache: true
-        },
-        children: [{
-                path: 'huaxin_deposit_and_withdrawal',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'huaxin_deposit_and_withdrawal',
-                meta: { title: '出入金表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'huaxin_client_funds',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'huaxin_client_funds',
-                meta: { title: '资金对账表', icon: 'icon', noCache: true }
-            },
-            {
-                path: 'huaxin_transaction',
-                component: () =>
-                    import ('@/views/unite/index'),
-                name: 'huaxin_transaction',
-                meta: { title: '交易统计表', icon: 'icon', noCache: true }
-            },
         ]
     },
     {

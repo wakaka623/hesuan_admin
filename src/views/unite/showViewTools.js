@@ -7,55 +7,59 @@ export function switchTitle (name) {
 
   switch (name) {
     case 'ruida_client_funds':
-      title = '瑞达资金表';
+      title = 'RDZJB';
       break;
 
     case 'ruida_transaction':
-      title = '瑞达成交表';
+      title = 'RDCJB';
       break;
 
     case 'ruida_deposit_and_withdrawal':
-      title = '瑞达出入金表';
-      break;
+      title = 'RDCRJB';
+      break; 
 
     case 'sanli_client_funds':
-      title = '三立客户资金表';
+      title = 'SLKHZJB';
       break;
 
     case 'sanli_transaction':
-      title = '三立客户交易表';
+      title = 'SLKHCJB';
       break;
 
     case 'jinkong_deposit_and_withdrawal':
-      title = '金控出入金表';
+      title = 'JKCRJB';
       break;
 
     case 'jinkong_client_funds':
-      title = '金控资金管理表';
+      title = 'JKZJGLB';
       break;
 
     case 'jinkong_transaction':
-      title = '金控交易统计表';
+      title = 'JKJYTJB';
       break;
 
     case 'hengyin_client_funds':
-      title = '恒银客户资金表';
+      title = 'HYZJB';
       break;
 
     case 'hengyin_transaction':
-      title = '恒银客户成交表';
+      title = 'HYCJB';
       break;
 
     case 'huaxin_deposit_and_withdrawal':
-      title = '华鑫出入金表';
+      title = 'HXCRJB';
       break;
 
     case 'huaxin_client_funds':
-      title = '华鑫资金对账表';
+      title = 'HXZJDZB';
       break;
 
     case 'huaxin_transaction':
-      title = '华鑫交易统计表';
+      title = 'HXJYTJB';
+      break;
+
+    case 'huaixn_history':
+      title = 'HXLSCJB';
       break;
 
     case 'chuangyuan':
@@ -94,4 +98,31 @@ export function setTransactionTotal() {
       { label: '平今手续费', prop: 'pingjin_service_charge' },
   ]
   return column
+}
+
+
+/***
+ * 表格排序
+ * @param array 进行排序的数组
+ * @param field 需要排序的字段
+ * @param reverse  排序方式
+ */
+export function jsonSort(array, field, reverse) {
+  //数组长度小于2 或 没有指定排序字段 或 不是json格式数据
+  if (array.length < 2 || !field || typeof array[0] !== "object") return array
+      //数字类型排序
+  if (typeof array[0][field] === "number") {
+      array.sort(function(x, y) { return x[field] - y[field] })
+  }
+  //字符串类型排序
+  if (typeof array[0][field] === "string") {
+      console.log(array);
+      array.sort(function(x, y) { return x[field].localeCompare(y[field])})
+
+  }
+  //倒序
+  if (reverse == 'descending') {
+      array.reverse();
+  }
+  return array
 }

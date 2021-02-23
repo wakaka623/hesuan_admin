@@ -9,6 +9,7 @@
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
         <el-button type="primary" @click="handleUpload" :disabled='this.disable?true:false'>导入</el-button>
         <el-button type="primary" @click="handleDownload" :disabled='this.disable?true:false'>导出</el-button>
+        <el-button type="primary" @click="handleExport" :disabled='this.disable?true:false'>全部导出</el-button>
         <el-button type="primary" @click="handleMoreDownload" :disabled='this.disable?true:false'>条件导出</el-button>
       </div>
     </div>
@@ -17,8 +18,11 @@
 
 <script>
 import selectLister from './select-lister.vue';
+import { exportALL } from '@/api/excel';
+let loading;
 
 export default {
+  name:'', // path值路由名动态变更
   components: {
     selectLister,
   },
@@ -147,6 +151,7 @@ export default {
     }
   },
   created(){
+    this.name = this.$route.name;
     let user=this.$cookies.get('user');
     if(user=='admin'){
       this.disable=!this.disable
@@ -176,7 +181,23 @@ export default {
     handleDownload() {
       this.$emit('download');
     },
+    /**
+     * 全部导出
+     */
+    handleExport(){
+      const loadingObj = this.$loading({
+        lock: true,
+        text: '玩命加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target: document.querySelector('.submit-test-dialog')
+      })
+      exportALL(this.name).then(res=>{
+        window.open(res.data)
+        loadingObj.close();
+      })
 
+    },
     /**
      * 批量导出按钮
      * @callback click
