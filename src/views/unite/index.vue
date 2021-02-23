@@ -275,7 +275,7 @@ export default {
 
           Message.success('导出成功!');
 
-          window.open(res.data.data);
+          window.open(res.data.data); 
 
           this.$refs.multipleTable.clearSelection();
         });
