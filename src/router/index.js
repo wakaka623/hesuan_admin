@@ -25,7 +25,7 @@ import Layout from '@/views/layout/Layout'
   }
 **/
 let isadmin=window.sessionStorage.getItem('isadmin');
-console.log(isadmin);
+// console.log(isadmin);
 
 export const constantRouterMap = [{
         path: '/login',
@@ -303,17 +303,17 @@ export const asyncRouterMap = [
             meta: { title: '东证', icon: 'icon', noCache: true }
         }]
     },
-    {
-        path: '/icon',
-        component: Layout,
-        children: [{
-            path: 'index',
-            component: () =>
-                import ('@/views/svg-icons/index'),
-            name: 'icons',
-            meta: { title: 'icons', icon: 'icon', noCache: true }
-        }]
-    },
+    // {
+    //     path: '/icon',
+    //     component: Layout,
+    //     children: [{
+    //         path: 'index',
+    //         component: () =>
+    //             import ('@/views/svg-icons/index'),
+    //         name: 'icons',
+    //         meta: { title: 'icons', icon: 'icon', noCache: true }
+    //     }]
+    // },
 
     { path: '*', redirect: '/404', hidden: true }
 ]
