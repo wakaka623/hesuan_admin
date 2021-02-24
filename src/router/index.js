@@ -212,6 +212,13 @@ export const constantRouterMap = [{
                 name: 'jinkong_client_funds',
                 meta: { title: '资金管理表', icon: 'icon', noCache: true }
             },
+             {
+                path: 'jinkong_chengjiaobiao',
+                component: () =>
+                    import ('@/views/unite/index'),
+                name: 'jinkong_chengjiaobiao',
+                meta: { title: '成交表', icon: 'icon', noCache: true }
+            },
             {
                 path: 'jinkong_transaction',
                 component: () =>
@@ -219,6 +226,7 @@ export const constantRouterMap = [{
                 name: 'jinkong_transaction',
                 meta: { title: '交易统计表', icon: 'icon', noCache: true }
             },
+           
         ]
     },
     // {

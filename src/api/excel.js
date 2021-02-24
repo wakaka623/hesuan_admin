@@ -103,14 +103,34 @@ export function mergeExport(tableNames, selectColumns, selectData) {
  * 全部导出
  *
  */
-export function exportALL(tableNames) {
+export function exportALL(tableNames,startDate,endDate) {
     const data = {
         table_names: tableNames,
+        startDate,
+        endDate
         
     };
 
     return request({
         url: '/import/excel/exportExcel',
+        method: 'post',
+        data
+    });
+}
+/**
+ * 区间删除
+ *
+ */
+export function deleteTableDate(tableNames,startDate,endDate) {
+    const data = {
+        table_names: tableNames,
+        startDate,
+        endDate
+        
+    };
+
+    return request({
+        url: '/import/excel/deleteTableDate',
         method: 'post',
         data
     });

@@ -38,6 +38,10 @@ export function switchTitle (name) {
       title = 'JKJYTJB';
       break;
 
+    case 'jinkong_chengjiaobiao':
+      title = 'JKCJB';
+      break;
+
     case 'hengyin_client_funds':
       title = 'HYZJB';
       break;

@@ -9,7 +9,8 @@
         <input type="file" class="excel-upload-input" id="excel-upload-input" accept=".xlsx, .xls" @change="handleFileChange">
         <el-button type="primary" @click="handleUpload" :disabled='this.disable?true:false'>导入</el-button>
         <el-button type="primary" @click="handleDownload" :disabled='this.disable?true:false'>导出</el-button>
-        <el-button type="primary" @click="handleExport" :disabled='this.disable?true:false'>全部导出</el-button>
+        <el-button type="primary" @click="handleExport" :disabled='this.disable?true:false'>区间导出</el-button>
+        <el-button type="primary" @click="handleDelete" :disabled='this.disable?true:false'>区间删除</el-button>
         <el-button type="primary" @click="handleMoreDownload" :disabled='this.disable?true:false'>条件导出</el-button>
       </div>
     </div>
@@ -18,8 +19,7 @@
 
 <script>
 import selectLister from './select-lister.vue';
-import { exportALL } from '@/api/excel';
-let loading;
+
 
 export default {
   name:'', // path值路由名动态变更
@@ -182,21 +182,28 @@ export default {
       this.$emit('download');
     },
     /**
-     * 全部导出
+     * 时间区间导出
      */
     handleExport(){
-      const loadingObj = this.$loading({
-        lock: true,
-        text: '玩命加载中...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target: document.querySelector('.submit-test-dialog')
-      })
-      exportALL(this.name).then(res=>{
-        window.open(res.data)
-        loadingObj.close();
-      })
+      // const loadingObj = this.$loading({
+      //   lock: true,
+      //   text: '玩命加载中...',
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.7)',
+      //   target: document.querySelector('.submit-test-dialog')
+      // })
+      // exportALL(this.name).then(res=>{
+      //   window.open(res.data)
+      //   loadingObj.close();
+      // })
+      this.$emit('interval-derivation')
 
+    },
+    /**
+     * 按日期区间删除
+     */
+    handleDelete(){
+       this.$emit('interval-deletion')
     },
     /**
      * 批量导出按钮

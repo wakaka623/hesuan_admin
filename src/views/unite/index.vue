@@ -7,7 +7,7 @@
         <el-form-item label="结束时间">
           <el-input v-model="formInline.date2" placeholder="结束时间"></el-input>
         </el-form-item> -->
-        <el-form-item label="搜索区间" required>
+        <el-form-item label="日期区间" required>
         <el-col :span="11">
         <el-form-item prop="date1">
           <el-date-picker type="date" placeholder="选择开始日期" v-model="formInline.date1" style="width: 100%;"></el-date-picker>
@@ -36,7 +36,8 @@
       </el-form>
     <div class="header">
       <formGroup ref="formGroup" :show="showFormGroup" @clear="showFormGroup=false" @finish="handleChoiceDownLoad" />
-      <funtBtns :headerTitle="headerTitle" @import="handleToImport" @download="handleToDownload" @more-down="handleMoreDown" />
+      <funtBtns :headerTitle="headerTitle" @import="handleToImport" @download="handleToDownload" @more-down="handleMoreDown" 
+       @interval-derivation="handleIntervalDerivation" @interval-deletion="handleIntervalDeletion" />
     </div>
     <div class="main">
       <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
@@ -88,7 +89,7 @@
 
 import { Message } from 'element-ui';
 
-import { getTableHeader, getTableDatas, importExcel, downLoadTable, mergeExport } from '@/api/excel';
+import { getTableHeader, getTableDatas, importExcel, downLoadTable, mergeExport,exportALL,deleteTableDate } from '@/api/excel';
 
 import formGroup from './components/form-group.vue';
 import funtBtns from './components/funt-btns.vue';
@@ -279,6 +280,57 @@ export default {
 
           this.$refs.multipleTable.clearSelection();
         });
+    },
+    /**
+     * 按日期区间导出
+     */
+    handleIntervalDerivation(){
+      let date1=this.formInline.date1
+      let date2=this.formInline.date2
+      if (date1==''||date2=='') {
+        return this.$message.error('日期区间不能为空！')
+      }
+      const loadingObj = this.$loading({
+        lock: true,
+        text: '玩命加载中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target: document.querySelector('.submit-test-dialog')
+      })
+      exportALL(this.name,date1,date2).then(res=>{
+        window.open(res.data)
+        loadingObj.close();
+      })
+    },
+    /**
+     * 按日期区间删除
+     */
+    handleIntervalDeletion(){
+      let date1=this.formInline.date1
+      let date2=this.formInline.date2
+      if (date1==''||date2=='') {
+        return this.$message.error('日期区间不能为空！')
+      }
+      this.$confirm('此操作将永久删除该区间数据, 是否已经导出备份?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteTableDate(this.name,date1,date2).then(res=>{
+          if (res.data.code!=='1') {
+           this.$message.error(res.data.message)
+          }
+          this.$message.success(res.data.message+'本次共删除了'+res.data.number+'条')
+          this.formInline.date1=''
+          this.formInline.date2=''
+          this.handleGetTableDatas()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })         
+      })
     },
 
 
